@@ -1,4 +1,4 @@
-const { Hardware, getAllWindows } = require('keysender');
+const { Hardware, getAllWindows } = require('@io-utils/keysender');
 const { sleep, randomSleep } = require('./util/util.js');
 const util = require('./util/util.js');
 const state = require('./state.js');
