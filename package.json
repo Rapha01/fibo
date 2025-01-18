@@ -1,0 +1,25 @@
+{
+  "name": "fibo",
+  "version": "1.0.0",
+  "description": "",
+  "main": "./src/app.js",
+  "scripts": {
+    "start": "electron .",
+    "nodemon": "nodemon --watch . --exec \"electron . \" -e js,json,html,css",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "electron": "^33.0.0",
+    "nodemon": "^3.1.4",
+    "keysender": "^2.3.0"
+
+  },
+  "dependencies": {
+    "bootstrap": "^5.3.3"
+  },
+  "nodemonConfig": {
+    "ignore": ["config.json"]
+  }
+}

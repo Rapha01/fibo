@@ -1,0 +1,492 @@
+<!--index.html-->
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+  <head>
+    <meta charset="UTF-8">
+    <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'">
+    <title>Fibo</title>
+    <link rel="stylesheet" href="../../node_modules/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="./mystyles.css">
+  </head>
+  <body>
+    <!--We are using Node.js <span id="node-version"></span>,
+    Chromium <span id="chrome-version"></span>,
+    and Electron <span id="electron-version"></span>.
+    <br /><br />-->
+    <br />
+
+    <div class="container mb-3">
+        <div class="d-grid gap-2">
+            <button id="startButton" class="btn btn-success btn-sm d-block" type="button">Start</button>
+            <button id="stopButton" class="btn btn-danger btn-sm d-none" type="button">Stop</button>
+        </div> 
+    </div>
+
+    <div class="container">
+        <div class="card text-white bg-secondary mb-3">
+            <div class="card-header">Stats</div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-3 statsCardHeading">Status: </div><div class="col-3 statsCardValue" id="stats_status"></div>
+                    <div class="col-3 statsCardHeading">Time running: </div><div class="col-3 statsCardValue" id="stats_timeRunning"></div>
+                    <div class="col-3 statsCardHeading">Round: </div><div class="col-3 statsCardValue" id="stats_round"></div>
+                    <div class="col-3 statsCardHeading">Rounds/h: </div><div class="col-3 statsCardValue" id="stats_roundsPerHour"></div>
+                    <div class="col-3 statsCardHeading">Reel In Fails </div><div class="col-3 statsCardValue" id="stats_reelInFails"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="card text-white bg-secondary mb-3">
+            <div class="card-header">Log</div>
+            <div class="card-body">
+                <div id="logScrollDiv" class="overflow-auto">
+                    <ul id="logScrollUl">
+                        
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container mb-3">
+        <div class="row">
+            <div class="col-6">
+                <button id="startVolumeMeterTestButton" class="btn btn-success btn-sm w-100 d-block" type="button">Start volume meter test</button>
+                <button id="stopVolumeMeterTestButton" class="btn btn-danger btn-sm w-100 d-none" type="button">Stop volume meter test</button>
+            </div>
+            <div class="col-3">
+                <span id="volumeMeterTestValue"></span>
+            </div>
+            <div class="col-3">
+                <span id="volumeMeterTestMaxValue"></span>
+            </div>
+        </div>
+    </div>
+    
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <h3>Settings</h3>
+                <div class="row">
+                    <div class="col-12">
+                        <div class="input-group input-group-sm mb-3">
+                            <span class="input-group-text">Window Title</span>
+                            <input id="windowTitle" type="text" class="form-control text-end configStateElement" value="testTitle">
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="input-group input-group-sm mb-3">
+                            <span class="input-group-text">Start Delay (m)</span>
+                            <input id="startDelayM" type="text" class="form-control text-end configStateElement" value="0">
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="input-group input-group-sm mb-3">
+                            <span class="input-group-text">End Delay (m)</span>
+                            <input id="endDelayM" type="text" class="form-control text-end configStateElement" value="0">
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="input-group input-group-sm mb-3">
+                            <span class="input-group-text">Volume Threshold</span>
+                            <input id="volumeThreshold" type="text" class="form-control text-end configStateElement" value="0.3">
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="input-group input-group-sm mb-3">
+                            <span class="input-group-text">Fish Button</span>
+                            <input id="fishButton" type="text" class="form-control text-end configStateElement" value="7">
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="input-group input-group-sm mb-3">
+                            <label class="input-group-text" for="inputGroupSelect01">Reelin Mode</label>
+                            <select id="reelInMode" class="form-select text-end configStateElement">
+                              <option selected value="interact" class="">Interact</option>
+                              <option value="randomClicks">Random Clicks</option>
+                            </select>
+                          </div>
+                    </div>
+                    <div class="col-12" id="interactSettingsDiv">
+                        <div class="row p-2">
+                            <div class="col-12">
+                                <div class="input-group input-group-sm mb-3">
+                                    <span class="input-group-text">Interact Button</span>
+                                    <input id="interactButton" type="text" class="form-control text-end configStateElement" value="+">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12" id="randomClicksWindowSettingsDiv">
+                        <div class="row p-2">
+                            <div class="col-4">
+                                <div class="input-group input-group-sm mb-3">
+                                    <span class="input-group-text">PosX (px)</span>
+                                    <input id="randomClicksWindowSettingsElement_posX" type="text" class="form-control text-end randomClicksWindowSettingsElement" value="0">
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="input-group input-group-sm mb-3">
+                                    <span class="input-group-text">PosY (px)</span>
+                                    <input id="randomClicksWindowSettingsElement_posY" type="text" class="form-control text-end randomClicksWindowSettingsElement" value="0">
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="input-group input-group-sm mb-3">
+                                    <span class="input-group-text">Width (px)</span>
+                                    <input id="randomClicksWindowSettingsElement_width" type="text" class="form-control text-end randomClicksWindowSettingsElement" value="0">
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="input-group input-group-sm mb-3">
+                                    <span class="input-group-text">Height (px)</span>
+                                    <input id="randomClicksWindowSettingsElement_height" type="text" class="form-control text-end randomClicksWindowSettingsElement" value="0">
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="input-group input-group-sm mb-3">
+                                    <span class="input-group-text">StepX (px)</span>
+                                    <input id="randomClicksWindowSettingsElement_stepX" type="text" class="form-control text-end randomClicksWindowSettingsElement" value="0">
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="input-group input-group-sm mb-3">
+                                    <span class="input-group-text">StepY (px)</span>
+                                    <input id="randomClicksWindowSettingsElement_stepY" type="text" class="form-control text-end randomClicksWindowSettingsElement" value="0">
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="input-group input-group-sm mb-3">
+                                    <span class="input-group-text">Entropy (px)</span>
+                                    <input id="randomClicksWindowSettingsElement_entropy" type="text" class="form-control text-end randomClicksWindowSettingsElement" value="0">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!--div class="col-12">
+                        <input class="form-check-input configStateElement" type="checkbox" value="" id="runInBackground">
+                        <label class="form-check-label" for="defaultCheck1">Run in Background</label>
+                    </div-->
+                </div>
+                
+            </div>
+            
+        </div>
+    </div>
+
+
+    <div class="container">
+        <div class="row">
+            <h6>Random Actions</h6>
+            <div class="col-6">
+                <input id="randomActions_mouseMoveClick" class="form-check-input" type="checkbox" value="">
+                <label class="form-check-label" for="defaultCheck1">MouseMove + Click (10%)</label>
+            </div>
+            <div class="col-6">
+                <input id="randomActions_wait" class="form-check-input" type="checkbox" value="">
+                <label class="form-check-label" for="defaultCheck1">Wait (2-8 sec, 10%)</label>
+            </div>
+        </div>  
+    </div>
+    <br />
+    <div class="container">
+        
+        <div class="row">
+            <h6>Custom Button #1</h6> 
+            <div class="col-6">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="input-group input-group-sm mb-3">
+                            <span class="input-group-text">Label</span>
+                            <input id="configCustomStateElement0_label" type="text" class="form-control text-end" value="">
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="input-group input-group-sm mb-3">
+                            <span class="input-group-text">Button</span>
+                            <input id="configCustomStateElement0_button" type="text" class="form-control text-end" value="">
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="input-group input-group-sm mb-3">
+                            <span class="input-group-text">Interval (s)</span>
+                            <input id="configCustomStateElement0_intervalS" type="text" class="form-control text-end" value="">
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="input-group input-group-sm mb-3">
+                            <span class="input-group-text">Casttime/Delay (ms)</span>
+                            <input id="configCustomStateElement0_delayMs" type="text" class="form-control text-end" value="">
+                        </div>
+                    </div>
+                </div>
+            </div> 
+            <div class="col-6">
+                <div class="row">
+                    <div class="col-12">
+                        <input id="configCustomStateElement0_active" class="form-check-input" type="checkbox" value="">
+                        <label class="form-check-label" for="defaultCheck1">Active</label>
+                    </div>
+                    <div class="col-12">
+                        <input id="configCustomStateElement0_inFishCast" class="form-check-input" type="checkbox" value="">
+                        <label class="form-check-label" for="defaultCheck1">Run during fishing</label>
+                    </div>
+                    <div class="col-12">
+                        <input id="configCustomStateElement0_runAtStart" class="form-check-input" type="checkbox" value="">
+                        <label class="form-check-label" for="defaultCheck1">Run at start</label>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+        <div class="row">
+            <h6>Custom Button #2</h6> 
+            <div class="col-6">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="input-group input-group-sm mb-3">
+                            <span class="input-group-text">Label</span>
+                            <input id="configCustomStateElement1_label" type="text" class="form-control text-end" value="">
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="input-group input-group-sm mb-3">
+                            <span class="input-group-text">Button</span>
+                            <input id="configCustomStateElement1_button" type="text" class="form-control text-end" value="">
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="input-group input-group-sm mb-3">
+                            <span class="input-group-text">Interval (s)</span>
+                            <input id="configCustomStateElement1_intervalS" type="text" class="form-control text-end" value="">
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="input-group input-group-sm mb-3">
+                            <span class="input-group-text">Casttime/Delay (ms)</span>
+                            <input id="configCustomStateElement1_delayMs" type="text" class="form-control text-end" value="">
+                        </div>
+                    </div>
+                </div>
+            </div> 
+            <div class="col-6">
+                <div class="row">
+                    <div class="col-12">
+                        <input id="configCustomStateElement1_active" class="form-check-input" type="checkbox" value="">
+                        <label class="form-check-label" for="defaultCheck1">Active</label>
+                    </div>
+                    <div class="col-12">
+                        <input id="configCustomStateElement1_inFishCast" class="form-check-input" type="checkbox" value="">
+                        <label class="form-check-label" for="defaultCheck1">Run during fishing</label>
+                    </div>
+                    <div class="col-12">
+                        <input id="configCustomStateElement1_runAtStart" class="form-check-input" type="checkbox" value="">
+                        <label class="form-check-label" for="defaultCheck1">Run at start</label>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+        <div class="row">
+            <h6>Custom Button #3</h6> 
+            <div class="col-6">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="input-group input-group-sm mb-3">
+                            <span class="input-group-text">Label</span>
+                            <input id="configCustomStateElement2_label" type="text" class="form-control text-end" value="">
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="input-group input-group-sm mb-3">
+                            <span class="input-group-text">Button</span>
+                            <input id="configCustomStateElement2_button" type="text" class="form-control text-end" value="">
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="input-group input-group-sm mb-3">
+                            <span class="input-group-text">Interval (s)</span>
+                            <input id="configCustomStateElement2_intervalS" type="text" class="form-control text-end" value="">
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="input-group input-group-sm mb-3">
+                            <span class="input-group-text">Casttime/Delay (ms)</span>
+                            <input id="configCustomStateElement2_delayMs" type="text" class="form-control text-end" value="">
+                        </div>
+                    </div>
+                </div>
+            </div> 
+            <div class="col-6">
+                <div class="row">
+                    <div class="col-12">
+                        <input id="configCustomStateElement2_active" class="form-check-input" type="checkbox" value="">
+                        <label class="form-check-label" for="defaultCheck1">Active</label>
+                    </div>
+                    <div class="col-12">
+                        <input id="configCustomStateElement2_inFishCast" class="form-check-input" type="checkbox" value="">
+                        <label class="form-check-label" for="defaultCheck1">Run during fishing</label>
+                    </div>
+                    <div class="col-12">
+                        <input id="configCustomStateElement2_runAtStart" class="form-check-input" type="checkbox" value="">
+                        <label class="form-check-label" for="defaultCheck1">Run at start</label>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+        <div class="row">
+            <h6>Custom Button #4</h6> 
+            <div class="col-6">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="input-group input-group-sm mb-3">
+                            <span class="input-group-text">Label</span>
+                            <input id="configCustomStateElement3_label" type="text" class="form-control text-end" value="">
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="input-group input-group-sm mb-3">
+                            <span class="input-group-text">Button</span>
+                            <input id="configCustomStateElement3_button" type="text" class="form-control text-end" value="">
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="input-group input-group-sm mb-3">
+                            <span class="input-group-text">Interval (s)</span>
+                            <input id="configCustomStateElement3_intervalS" type="text" class="form-control text-end" value="">
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="input-group input-group-sm mb-3">
+                            <span class="input-group-text">Casttime/Delay (ms)</span>
+                            <input id="configCustomStateElement3_delayMs" type="text" class="form-control text-end" value="">
+                        </div>
+                    </div>
+                </div>
+            </div> 
+            <div class="col-6">
+                <div class="row">
+                    <div class="col-12">
+                        <input id="configCustomStateElement3_active" class="form-check-input" type="checkbox" value="">
+                        <label class="form-check-label" for="defaultCheck1">Active</label>
+                    </div>
+                    <div class="col-12">
+                        <input id="configCustomStateElement3_inFishCast" class="form-check-input" type="checkbox" value="">
+                        <label class="form-check-label" for="defaultCheck1">Run during fishing</label>
+                    </div>
+                    <div class="col-12">
+                        <input id="configCustomStateElement3_runAtStart" class="form-check-input" type="checkbox" value="">
+                        <label class="form-check-label" for="defaultCheck1">Run at start</label>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+        <div class="row">
+            <h6>Custom Button #5</h6> 
+            <div class="col-6">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="input-group input-group-sm mb-3">
+                            <span class="input-group-text">Label</span>
+                            <input id="configCustomStateElement4_label" type="text" class="form-control text-end" value="">
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="input-group input-group-sm mb-3">
+                            <span class="input-group-text">Button</span>
+                            <input id="configCustomStateElement4_button" type="text" class="form-control text-end" value="">
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="input-group input-group-sm mb-3">
+                            <span class="input-group-text">Interval (s)</span>
+                            <input id="configCustomStateElement4_intervalS" type="text" class="form-control text-end" value="">
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="input-group input-group-sm mb-3">
+                            <span class="input-group-text">Casttime/Delay (ms)</span>
+                            <input id="configCustomStateElement4_delayMs" type="text" class="form-control text-end" value="">
+                        </div>
+                    </div>
+                </div>
+            </div> 
+            <div class="col-6">
+                <div class="row">
+                    <div class="col-12">
+                        <input id="configCustomStateElement4_active" class="form-check-input" type="checkbox" value="">
+                        <label class="form-check-label" for="defaultCheck1">Active</label>
+                    </div>
+                    <div class="col-12">
+                        <input id="configCustomStateElement4_inFishCast" class="form-check-input" type="checkbox" value="">
+                        <label class="form-check-label" for="defaultCheck1">Run during fishing</label>
+                    </div>
+                    <div class="col-12">
+                        <input id="configCustomStateElement4_runAtStart" class="form-check-input" type="checkbox" value="">
+                        <label class="form-check-label" for="defaultCheck1">Run at start</label>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+        <div class="row">
+            <h6>Custom Button #6</h6> 
+            <div class="col-6">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="input-group input-group-sm mb-3">
+                            <span class="input-group-text">Label</span>
+                            <input id="configCustomStateElement5_label" type="text" class="form-control text-end" value="">
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="input-group input-group-sm mb-3">
+                            <span class="input-group-text">Button</span>
+                            <input id="configCustomStateElement5_button" type="text" class="form-control text-end" value="">
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="input-group input-group-sm mb-3">
+                            <span class="input-group-text">Interval (s)</span>
+                            <input id="configCustomStateElement5_intervalS" type="text" class="form-control text-end" value="">
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="input-group input-group-sm mb-3">
+                            <span class="input-group-text">Casttime/Delay (ms)</span>
+                            <input id="configCustomStateElement5_delayMs" type="text" class="form-control text-end" value="">
+                        </div>
+                    </div>
+                </div>
+            </div> 
+            <div class="col-6">
+                <div class="row">
+                    <div class="col-12">
+                        <input id="configCustomStateElement5_active" class="form-check-input" type="checkbox" value="">
+                        <label class="form-check-label" for="defaultCheck1">Active</label>
+                    </div>
+                    <div class="col-12">
+                        <input id="configCustomStateElement5_inFishCast" class="form-check-input" type="checkbox" value="">
+                        <label class="form-check-label" for="defaultCheck1">Run during fishing</label>
+                    </div>
+                    <div class="col-12">
+                        <input id="configCustomStateElement5_runAtStart" class="form-check-input" type="checkbox" value="">
+                        <label class="form-check-label" for="defaultCheck1">Run at start</label>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+        
+    </div>
+
+    <!-- You can also require other files to run in this process -->
+    <script src="./renderer.js"></script>
+  </body>
+</html>
+

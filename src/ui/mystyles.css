@@ -1,0 +1,16 @@
+#logScrollDiv {
+    height:300px
+}
+
+#logScrollUl {
+    font-size: 11px;
+    list-style-type: none;
+}
+
+.statsCardHeading {
+    font-size: 13px;
+}
+
+.statsCardValue {
+    font-size: 11px;
+}
