@@ -19,7 +19,7 @@ exports.start = async () => {
 
             await doRound();
     
-        } catch (error) { 
+        } catch (error) {
             if (state.session.running) {
                 console.log(error);
                 await state.addUiLog('danger' ,error.message);
@@ -31,7 +31,7 @@ exports.start = async () => {
 }
 
 const doRound = async () => {
-    await state.addUiLog('success' ,'Bot round #' + state.session.round);
+    await state.addUiLog('warning' ,'Bot round #' + state.session.round);
 
     const kswindow = await robot.getWindow(state.config.windowTitle);
     if (!state.session.running) throw new Error('Bot stopped');

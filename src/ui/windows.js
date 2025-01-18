@@ -22,12 +22,13 @@ const createMenuWindow = async (settings) => {
     webPreferences: {
       preload: path.join(__dirname, 'preload.js')
     },
-
   });
 
   await win.setContentProtection(true);
   await win.loadFile('./src/ui/index.html', { query: JSON.stringify(settings) });
-  await win.webContents.openDevTools();
+
+  if (!(process.env.NODE_ENV == 'prod'))
+    await win.webContents.openDevTools();
   
   win.on('closed', () => {
     app.quit();

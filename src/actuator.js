@@ -78,7 +78,6 @@ exports.customButtons = async (kswindow,isFishing) => {
 }
 
 exports.randomActions = async (kswindow) => {
-    await state.addUiLog('success' ,'Doing random actions.');
     const rand = Math.round(Math.random() * 100);
 
     // Random sleep
@@ -86,7 +85,7 @@ exports.randomActions = async (kswindow) => {
         if (!state.session.running) throw new Error('Bot stopped');
         const randSleep = util.randomIntBetween(2,10);
         await state.addUiLog('success' ,'Doing random action: sleep for ' + randSleep + 's.');
-        await sleep(randSleep * 1000);
+        await randomSleep(randSleep * 1000, 500);
     }
     
     // Random Click
@@ -95,9 +94,16 @@ exports.randomActions = async (kswindow) => {
         const windowSize = kswindow.workwindow.getView();
         const xCoord = util.randomIntBetween(0.25 * windowSize.width, windowSize.x + 0.75 * windowSize.width);
         const yCoord = util.randomIntBetween(0.25 * windowSize.height, windowSize.x + 0.75 * windowSize.height);
+        await state.addUiLog('success' ,'Doing random action: mouseMoveClick to (' + xCoord + ',' + yCoord  + ').');
         await kswindow.mouse.humanMoveTo(xCoord,yCoord);
         await randomSleep(300,50);
         await humanClick(kswindow, 'left'); 
+    }
+
+    if (state.config.randomActions.mouseMoveClick && rand >= 20 && rand < 30) {
+        await state.addUiLog('success' ,'Doing random action: jump.');
+        await humanSendKey(kswindow,'space');
+        await randomSleep(2000,150);
     }
 }
 
@@ -130,12 +136,13 @@ exports.waitForBlobber = async (kswindow, timeElapsedS) => {
         await humanSendKey(kswindow,state.config.interactButton);
         
     }
+
     if (state.config.reelInMode == 'randomClicks') {
         await randomSleep(300,50);
         await reelInRandomClicks(kswindow);
     }
 
-    randomSleep(2000,200);
+    await randomSleep(3000,200);
     return found;
 }
 

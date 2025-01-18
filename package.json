@@ -4,8 +4,8 @@
   "description": "",
   "main": "./src/app.js",
   "scripts": {
-    "start": "electron .",
-    "nodemon": "nodemon --watch . --exec \"electron . \" -e js,json,html,css",
+    "start": "set NODE_ENV=prod&& electron .",
+    "nodemon": "set NODE_ENV=dev&& nodemon --watch . --exec \"electron . \" -e js,json,html,css",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",

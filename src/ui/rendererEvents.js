@@ -2,21 +2,9 @@ const state = require('../state.js');
 const windows = require('./windows.js');
 const util = require('../util/util.js');
 
-/*
-const startPause = async (data) => {
-  if (data.type == 'start') {
-    await state.updateSession('running', true);
-  } 
-    
-  if (data.type == 'stop') {
-    await state.initSession();
-  }
-    
-  return true;
-}*/
 
 const updateConfigState = async (data) => {
-  console.log('rendererEvent updateConfigState:',data.field,data.value);
+    //console.log('rendererEvent updateConfigState:',data.field,data.value);
     if (data.field == 'startDelayM' || data.field == 'endDelayM' || data.field == 'volumeThreshold')
         data.value = parseFloat(data.value);
     if (data.field == 'customButtons') {
@@ -34,7 +22,7 @@ const updateConfigState = async (data) => {
 }
 
 const updateSessionState = async (data) => {
-    console.log('rendererEvent updateSessionState:',data.field,data.value);
+    //console.log('rendererEvent updateSessionState:',data.field,data.value);
     await state.updateSession(data.field,data.value);
     return true;
 }

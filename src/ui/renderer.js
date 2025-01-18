@@ -1,7 +1,7 @@
 const numberOfCustomButtons = 6;
 const customButtonFields = ['label','active','button','intervalS','delayMs','inFishCast','runAtStart'];
 const randomClicksWindowSettingsFields = ['posX','posY','width','height','stepX','stepY','entropy'];
-const randomActionsFields = ['mouseMoveClick','wait'];
+const randomActionsFields = ['mouseMoveClick','wait','jump'];
 let volumeMeterTestActive = false;
 
 const startButton = document.getElementById('startButton');
