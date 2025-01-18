@@ -296,7 +296,7 @@ async function updateSessionState() {
         stats_roundDiv.innerText = state.session.round;
         const roundsPerHour = Math.floor((state.session.round - 1) / (timeElapsedS / 60 / 60));
         stats_roundsPerHourDiv.innerText = isNaN(roundsPerHour) ? '0' : roundsPerHour;
-        stats_reelInFailsDiv.innerText = Math.floor(state.session.reelInFails / state.session.round) + '%';
+        stats_reelInFailsDiv.innerText = Math.floor((state.session.reelInFails / state.session.round) * 100) + '%';
     } else {
         showStartButton();
         stats_statusDiv.innerHTML = '<svg xmlns="./src/ui/assets/circle-fill.svg" width="11" height="11" fill="#BB2D3B" class="bi bi-circle-fill" viewBox="0 0 16 16"><circle cx="8" cy="8" r="8"/></svg> Not running';
