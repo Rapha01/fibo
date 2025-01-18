@@ -80,16 +80,27 @@ exports.customButtons = async (kswindow,isFishing) => {
 exports.randomActions = async (kswindow) => {
     const rand = Math.round(Math.random() * 100);
 
-    // Sleep
+    // Wait
     if (state.config.randomActions.wait && rand < 10) {
         if (!state.session.running) throw new Error('Bot stopped');
         const randSleep = util.randomIntBetween(2,10);
         await state.addUiLog('success' ,'Doing random action: sleep for ' + randSleep + 's.');
         await randomSleep(randSleep * 1000, 500);
     }
-    
-    // Move Click
-    if (state.config.randomActions.mouseMoveClick && rand >= 10 && rand < 20) {
+
+    // Move Mouse
+    if (state.config.randomActions.mouseMove && rand >= 10 && rand < 20) {
+        if (!state.session.running) throw new Error('Bot stopped');
+        const windowSize = kswindow.workwindow.getView();
+        const xCoord = util.randomIntBetween(Math.floor(0.3 * windowSize.width), Math.floor(0.7 * windowSize.width));
+        const yCoord = util.randomIntBetween(Math.floor(0.3 * windowSize.height), Math.floor(0.7 * windowSize.height));
+        await state.addUiLog('success' ,'Doing random action: mouseMove to (' + xCoord + ',' + yCoord  + ').');
+        await kswindow.mouse.humanMoveTo(xCoord,yCoord);
+        await randomSleep(300,50);
+    }
+
+    // Move Click Mouse
+    if (state.config.randomActions.mouseMoveClick && rand >= 20 && rand < 30) {
         if (!state.session.running) throw new Error('Bot stopped');
         const windowSize = kswindow.workwindow.getView();
         const xCoord = util.randomIntBetween(Math.floor(0.3 * windowSize.width), Math.floor(0.7 * windowSize.width));
@@ -102,7 +113,7 @@ exports.randomActions = async (kswindow) => {
 
     // Jump
     console.log(state.config.randomActions.mouseMoveClick);
-    if (state.config.randomActions.jump && rand >= 20 && rand < 30) {
+    if (state.config.randomActions.jump && rand >= 40 && rand < 50) {
         await state.addUiLog('success' ,'Doing random action: jump.');
         await humanSendKey(kswindow,'space');
         await randomSleep(2000,150);

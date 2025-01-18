@@ -31,7 +31,8 @@ const defaultConfig = {
     fishButton:'7',
     interactButton:'0',
     randomActions: {
-        mouseMoveClick: true,
+        mouseMove: true,
+        mouseMoveClick: false,
         wait: true,
         jump: true
     }
