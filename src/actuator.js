@@ -122,7 +122,7 @@ exports.randomActions = async (kswindow) => {
 
 exports.waitForBlobber = async (kswindow, timeElapsedS) => {
     const startDate = Date.now();
-    const timeToWaitS = Math.abs(20 - timeElapsedS);
+    const timeToWaitS = parseFloat(20 - timeElapsedS).toFixed(3) ;
     let found = false;
 
     await state.addUiLog('success' ,'Waiting for blobber (' + timeToWaitS + 's left).');
