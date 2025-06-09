@@ -181,8 +181,8 @@ const reelInRandomClicks = async (kswindow) => {
             yCoord = relativeClickWindowPosY + stepperY + util.randomIntBetween(-set.entropy,set.entropy);
 
             await kswindow.mouse.humanMoveTo(xCoord,yCoord,15);
-            //await humanClick(kswindow, 'right');
-            await kswindow.mouse.click('left',util.randomIntBetween(5,15),util.randomIntBetween(5,15));
+            await humanClick(kswindow, 'right');
+            //await kswindow.mouse.click('left',util.randomIntBetween(5,15),util.randomIntBetween(5,15));
 
             if (i % 2 == 0)
                 stepperX += set.stepX;
