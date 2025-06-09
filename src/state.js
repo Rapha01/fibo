@@ -10,6 +10,7 @@ const defaultConfig = {
     endDelayM:0,
     volumeThreshold:0.4,
     reelInMode:'interact',
+    globalCooldown:1700,
     randomClicksWindowSettings: {
         posX:0,
         posY:0,

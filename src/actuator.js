@@ -40,7 +40,7 @@ exports.castFishAndInFishCustomButtons = async (kswindow) => {
     await humanSendKey(kswindow,state.config.fishButton);
     await randomSleep(200,80);
     const fishingStartDate = Date.now();
-    await sleepGlobalCooldown();
+    await randomSleep(state.config.globalCooldown,80);
     
     await exports.customButtons(kswindow, true);
 
@@ -150,13 +150,14 @@ exports.reelIn = async (kswindow,clickWindow) => {
     if (state.config.reelInMode == 'interact') {
         await randomSleep(600,100);
         await humanSendKey(kswindow,state.config.interactButton);
+        await randomSleep(3000,200);
     }
 
     if (state.config.reelInMode == 'randomClicks') {
-        await randomSleep(300,50);
+        await randomSleep(100,30);
         await reelInRandomClicks(kswindow);
+        await randomSleep(2000,200);
     }
-    await randomSleep(3000,200);
 }
 
 const reelInRandomClicks = async (kswindow) => {
@@ -164,8 +165,8 @@ const reelInRandomClicks = async (kswindow) => {
     let xCoord,yCoord;
     const set = state.config.randomClicksWindowSettings;
     
-    relativeClickWindowPosX = set.posX - kswindow.workwindow.getView().x + 10;
-    relativeClickWindowPosY = set.posY - kswindow.workwindow.getView().y + 10;
+    relativeClickWindowPosX = set.posX - kswindow.workwindow.getView().x + util.randomIntBetween(5,15);
+    relativeClickWindowPosY = set.posY - kswindow.workwindow.getView().y + util.randomIntBetween(0,20);
 
     let i = 0;
     while (stepperY < set.height) {
@@ -204,8 +205,4 @@ const humanClick = async (kswindow, key) => {
     await kswindow.mouse.toggle(key, true);
     await randomSleep(70,10);
     await kswindow.mouse.toggle(key, false);
-}
-
-const sleepGlobalCooldown = async () => {
-    await randomSleep(1700,80);
 }

@@ -5,7 +5,7 @@ const util = require('../util/util.js');
 
 const updateConfigState = async (data) => {
     //console.log('rendererEvent updateConfigState:',data.field,data.value);
-    if (data.field == 'startDelayM' || data.field == 'endDelayM' || data.field == 'volumeThreshold')
+    if (data.field == 'startDelayM' || data.field == 'endDelayM' || data.field == 'volumeThreshold' || data.field == 'globalCooldown')
         data.value = parseFloat(data.value);
     if (data.field == 'customButtons') {
       for (const customButton of data.value) {
