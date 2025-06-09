@@ -161,31 +161,42 @@ exports.reelIn = async (kswindow,clickWindow) => {
 
 const reelInRandomClicks = async (kswindow) => {
     let stepperX,stepperY = 0;
+    let xCoord,yCoord;
     const set = state.config.randomClicksWindowSettings;
     
     relativeClickWindowPosX = set.posX - kswindow.workwindow.getView().x + 10;
     relativeClickWindowPosY = set.posY - kswindow.workwindow.getView().y + 10;
 
-    
+    let i = 0;
     while (stepperY < set.height) {
-        stepperX = 0;
-        while (stepperX < set.width) {
+        if (i % 2 == 0) 
+            stepperX = 0;
+        else 
+            stepperX = set.width;
+
+        while (stepperX >= 0 && stepperX <= set.width) {
             if (!state.session.running) throw new Error('Bot stopped');
 
-            const xCoord = relativeClickWindowPosX + stepperX + util.randomIntBetween(-set.entropy,set.entropy); 
-            const yCoord = relativeClickWindowPosY + stepperY + util.randomIntBetween(-set.entropy,set.entropy);
-            await kswindow.mouse.humanMoveTo(xCoord,yCoord);
-            await humanClick(kswindow, 'right'); 
+            xCoord = relativeClickWindowPosX + stepperX + util.randomIntBetween(-set.entropy,set.entropy);
+            yCoord = relativeClickWindowPosY + stepperY + util.randomIntBetween(-set.entropy,set.entropy);
 
-            stepperX += set.stepX;
+            await kswindow.mouse.humanMoveTo(xCoord,yCoord,15);
+            //await humanClick(kswindow, 'right');
+            await kswindow.mouse.click('left',util.randomIntBetween(5,15),util.randomIntBetween(5,15));
+
+            if (i % 2 == 0)
+                stepperX += set.stepX;
+            else
+                stepperX -= set.stepX;
         }
         stepperY += set.stepY;
+        i++;
     }
 }
 
 const humanSendKey = async (kswindow, key) => {
     await kswindow.keyboard.toggleKey(key, true);
-    await randomSleep(100,20);
+    await randomSleep(120,30);
     await kswindow.keyboard.toggleKey(key, false);
 }
 
