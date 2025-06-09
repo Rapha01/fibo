@@ -143,7 +143,7 @@ exports.waitForBlobber = async (kswindow, timeElapsedS) => {
     await state.updateSession('reelInFails', state.session.reelInFails + 1);
     await randomSleep(1000,200);
 
-    return found;
+    return false;
 }
 
 exports.reelIn = async (kswindow,clickWindow) => {
