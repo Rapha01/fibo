@@ -46,8 +46,8 @@ const createClickWindow = async () => {
     height: state.config.randomClicksWindowSettings.height,
     alwaysOnTop: true,
     frame: false,
-    x: state.config.randomClicksWindowSettings.topX,
-    y: state.config.randomClicksWindowSettings.topY,
+    x: state.config.randomClicksWindowSettings.posX,
+    y: state.config.randomClicksWindowSettings.posY,
     opacity: 0.3,
     autoHideMenuBar: true,
     webPreferences: {

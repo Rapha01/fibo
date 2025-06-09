@@ -38,6 +38,7 @@ exports.test = async (kswindow) => {
 exports.castFishAndInFishCustomButtons = async (kswindow) => {
     await state.addUiLog('success' ,'Casting fishing rod.');
     await humanSendKey(kswindow,state.config.fishButton);
+    await randomSleep(200,80);
     const fishingStartDate = Date.now();
     await sleepGlobalCooldown();
     
@@ -72,6 +73,7 @@ exports.customButtons = async (kswindow,isFishing) => {
         state.session.customButtonTimers[i] = Date.now();
         await state.addUiLog('success' ,'Using customButton #' + (i+1) + ': ' + customButton.label);
         await humanSendKey(kswindow,customButton.button);
+        await randomSleep(200,80);
 
         await randomSleep(customButton.delayMs,customButton.delayMs*0,1);
     }
@@ -108,11 +110,11 @@ exports.randomActions = async (kswindow) => {
         await state.addUiLog('success' ,'Doing random action: mouseMoveClick to (' + xCoord + ',' + yCoord  + ').');
         await kswindow.mouse.humanMoveTo(xCoord,yCoord);
         await randomSleep(300,50);
-        await humanClick(kswindow, 'left'); 
+        await humanClick(kswindow, 'left');
+        await randomSleep(300,50);
     }
 
     // Jump
-    console.log(state.config.randomActions.mouseMoveClick);
     if (state.config.randomActions.jump && rand >= 40 && rand < 50) {
         await state.addUiLog('success' ,'Doing random action: jump.');
         await humanSendKey(kswindow,'space');
@@ -123,58 +125,74 @@ exports.randomActions = async (kswindow) => {
 exports.waitForBlobber = async (kswindow, timeElapsedS) => {
     const startDate = Date.now();
     const timeToWaitS = parseFloat(20 - timeElapsedS).toFixed(3) ;
-    let found = false;
 
     await state.addUiLog('success' ,'Waiting for blobber (' + timeToWaitS + 's left).');
     while ((Date.now() - startDate) / 1000 < timeToWaitS) {
         if (!state.session.running) throw new Error('Bot stopped');
 
         if (await util.getSystemVolume() > state.config.volumeThreshold) {
-            found = true;
             await state.addUiLog('success' ,'Detected blobber trigger.');
-            break;
+            return true;
         }
 
         await sleep(200);
     }
 
-    if (!found) {
-        await state.addUiLog('danger' ,'Blobber trigger not detected.');
-        await state.updateSession('reelInFails', state.session.reelInFails + 1);
-        return;
-    }
 
+    await state.addUiLog('danger' ,'Blobber trigger not detected.');
+    await state.updateSession('reelInFails', state.session.reelInFails + 1);
+    await randomSleep(1000,200);
+
+    return found;
+}
+
+exports.reelIn = async (kswindow,clickWindow) => {
     if (state.config.reelInMode == 'interact') {
         await randomSleep(600,100);
         await humanSendKey(kswindow,state.config.interactButton);
-        
     }
 
     if (state.config.reelInMode == 'randomClicks') {
         await randomSleep(300,50);
         await reelInRandomClicks(kswindow);
     }
-
     await randomSleep(3000,200);
-    return found;
 }
 
-const reelInRandomClicks = async (kswindow, key) => {
-    // TODO randomClicks reel-in mode
+const reelInRandomClicks = async (kswindow) => {
+    let stepperX,stepperY = 0;
+    const set = state.config.randomClicksWindowSettings;
+    
+    relativeClickWindowPosX = set.posX - kswindow.workwindow.getView().x + 10;
+    relativeClickWindowPosY = set.posY - kswindow.workwindow.getView().y + 10;
+
+    
+    while (stepperY < set.height) {
+        stepperX = 0;
+        while (stepperX < set.width) {
+            if (!state.session.running) throw new Error('Bot stopped');
+
+            const xCoord = relativeClickWindowPosX + stepperX + util.randomIntBetween(-set.entropy,set.entropy); 
+            const yCoord = relativeClickWindowPosY + stepperY + util.randomIntBetween(-set.entropy,set.entropy);
+            await kswindow.mouse.humanMoveTo(xCoord,yCoord);
+            await humanClick(kswindow, 'right'); 
+
+            stepperX += set.stepX;
+        }
+        stepperY += set.stepY;
+    }
 }
 
 const humanSendKey = async (kswindow, key) => {
     await kswindow.keyboard.toggleKey(key, true);
     await randomSleep(100,20);
     await kswindow.keyboard.toggleKey(key, false);
-    await randomSleep(200,80);
 }
 
 const humanClick = async (kswindow, key) => {
     await kswindow.mouse.toggle(key, true);
-    await randomSleep(100,20);
+    await randomSleep(70,10);
     await kswindow.mouse.toggle(key, false);
-    await randomSleep(200,80);
 }
 
 const sleepGlobalCooldown = async () => {

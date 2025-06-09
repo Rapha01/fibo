@@ -1,6 +1,6 @@
 const { sleep } = require('./util/util.js');
 const state = require('./state.js');
-const robot = require('./actuator.js');
+const actuator = require('./actuator.js');
 const util = require('./util/util.js');
 
 exports.start = async () => {
@@ -33,25 +33,29 @@ exports.start = async () => {
 const doRound = async () => {
     await state.addUiLog('warning' ,'Bot round #' + state.session.round);
 
-    const kswindow = await robot.getWindow(state.config.windowTitle);
+    const kswindow = await actuator.getWindow(state.config.windowTitle);
     if (!state.session.running) throw new Error('Bot stopped');
 
-    await robot.focusWindow(kswindow);
+    await actuator.focusWindow(kswindow);
     if (!state.session.running) throw new Error('Bot stopped');
 
-    const timeElapsedS = await robot.castFishAndInFishCustomButtons(kswindow);
+    const timeElapsedS = await actuator.castFishAndInFishCustomButtons(kswindow);
     if (!state.session.running) throw new Error('Bot stopped');
 
-    await robot.waitForBlobber(kswindow, timeElapsedS);
+    const success = await actuator.waitForBlobber(kswindow, timeElapsedS);
     if (!state.session.running) throw new Error('Bot stopped');
 
-    await robot.customButtons(kswindow,false);
+    if (success)
+        await actuator.reelIn(kswindow);
+    if (!state.session.running) throw new Error('Bot stopped');
+
+    await actuator.customButtons(kswindow,false);
     if (!state.session.running) throw new Error('Bot stopped');
     
-    await robot.randomActions(kswindow);
+    await actuator.randomActions(kswindow);
     if (!state.session.running) throw new Error('Bot stopped');
 
-    /*await robot.test(kswindow);
+    /*await actuator.test(kswindow);
     if (!state.session.running) throw new Error('Bot stopped');
     await sleep(1000);*/
     

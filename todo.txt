@@ -1,0 +1,4 @@
+- Custom button repeat option
+- Stop at high volume check between casts
+- Stop at repeated reelInFails
+- reelInMethod randomClicks
