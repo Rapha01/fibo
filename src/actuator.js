@@ -45,7 +45,7 @@ exports.castFishAndInFishCustomButtons = async (kswindow) => {
     await exports.customButtons(kswindow, true);
 
     const timeElapsed = Date.now() - fishingStartDate;
-    const waitTimeAfterCastingFish = 3000;
+    const waitTimeAfterCastingFish = 1000;
     const timeLeftToWait = waitTimeAfterCastingFish - timeElapsed;
     if (timeLeftToWait > 0)
         await sleep(timeLeftToWait)
