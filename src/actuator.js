@@ -165,8 +165,8 @@ const reelInRandomClicks = async (kswindow) => {
     let xCoord,yCoord;
     const set = state.config.randomClicksWindowSettings;
     
-    relativeClickWindowPosX = set.posX - kswindow.workwindow.getView().x + util.randomIntBetween(5,15);
-    relativeClickWindowPosY = set.posY - kswindow.workwindow.getView().y + util.randomIntBetween(0,20);
+    relativeClickWindowPosX = set.posX - kswindow.workwindow.getView().x + util.randomIntBetween(3,6);
+    relativeClickWindowPosY = set.posY - kswindow.workwindow.getView().y + util.randomIntBetween(0,3);
 
     let i = 0;
     while (stepperY < set.height) {
@@ -182,7 +182,9 @@ const reelInRandomClicks = async (kswindow) => {
             yCoord = relativeClickWindowPosY + stepperY + util.randomIntBetween(-set.entropy,set.entropy);
 
             await kswindow.mouse.humanMoveTo(xCoord,yCoord,15);
+            await randomSleep(5,1);
             await humanClick(kswindow, 'right');
+            await randomSleep(5,1);
             //await kswindow.mouse.click('left',util.randomIntBetween(5,15),util.randomIntBetween(5,15));
 
             if (i % 2 == 0)
